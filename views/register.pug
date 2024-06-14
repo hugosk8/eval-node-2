@@ -1,0 +1,31 @@
+doctype html 
+html 
+    head 
+        title Enregistrement 
+    body 
+        h1 Création d'un compte
+
+        if error 
+            p(style="color: red") #{error}
+
+        form(action="/auth/register" method="post") 
+            div     
+                label(for="firstName") Prénom :
+                input(type="text" name="firstName" required)
+            div     
+                label(for="lastName") Nom :
+                input(type="text" name="lastName" required)
+            div     
+                label(for="email") Email :
+                input(type="mail" name="email" required)
+            div     
+                label(for="password") Mot de passe :
+                input(type="password" name="password" required)
+            div     
+                label(for="confirmPassword") Confirmer le mot de passe :
+                input(type="password" name="confirmPassword" required)
+            div 
+                button(type="submit") Enregister 
+        
+        p Déja un compte?
+            a(href="/auth/login") Connexion
