@@ -11,14 +11,14 @@ export const showRegisterForm = (req, res) => {
 export const registerUser = async (req, res) => {
     const { firstName, lastName, email, password, confirmPassword } = req.body;
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-        return res.render('register', { error: 'Tout les champs sont obligatoires' });
+        return res.render('register', { error: 'Tous les champs sont obligatoires' });
     } else if (password !== confirmPassword) {
         return res.render('register', { error: 'Les mots de passe ne correspondent pas' });
     }
-    
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        return res.render('register', { error: 'L\'utilisateur existe deja' });
+        return res.render('register', { error: 'L\'utilisateur existe déjà' });
     }
 
     const hash = crypto.createHmac('sha256', process.env.SECRET_KEY)
@@ -36,12 +36,16 @@ export const showLoginForm = (req, res) => {
 
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
+    console.log('Tentative de connexion avec:', email, password);
+
     if (!email || !password) {
-        res.render('login', { error: 'Tout les champs sont obligatoires' });
+        console.log('Tous les champs sont obligatoires');
+        return res.render('login', { error: 'Tous les champs sont obligatoires' });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
+        console.log('Utilisateur introuvable');
         return res.render('login', { error: 'Utilisateur introuvable' });
     }
 
@@ -50,9 +54,21 @@ export const loginUser = async (req, res) => {
                         .digest('hex');
     
     if (hash !== user.password) {
+        console.log('Mot de passe incorrect');
         return res.render('login', { error: 'Mot de passe incorrect' });
     } else {
         req.session.userId = user._id;
-        res.redirect('/user/dashboard');
+        console.log('Connexion réussie, redirection vers le tableau de bord');
+        res.redirect('/auth/login?redirect=true');
     }
+};
+
+export const logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.redirect('/user/dashboard');
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/auth/login');
+    });
 };

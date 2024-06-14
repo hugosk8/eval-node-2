@@ -1,6 +1,6 @@
 export const checkAuth = (req, res) => {
     if (!req.session.UserId) {
-        return res.redirect('/login');
+        return res.redirect('/auth/login');
     } 
     next();
 };

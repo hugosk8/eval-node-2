@@ -21,12 +21,12 @@ server.use(express.static(path.join(__dirname, 'public')));
 server.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URL })
 }));
 
-server.use('/', routes)
+server.use('/', routes);
 
 server.listen(port, () => {
     console.log(`Listening on port ${port}`);
-})
+});
